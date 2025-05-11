@@ -1,7 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { Video, Youtube } from "lucide-react";
+import { Video } from "lucide-react";
 
 const Header = () => {
   return (
@@ -16,10 +16,6 @@ const Header = () => {
       </div>
       
       <div className="ml-auto flex items-center gap-4">
-        <Button size="sm" variant="outline" className="hidden md:flex items-center gap-1">
-          <Youtube className="h-4 w-4" />
-          <span>Tutorial</span>
-        </Button>
         <Button size="sm" className="bg-ocean hover:bg-ocean-dark">
           New Analysis
         </Button>

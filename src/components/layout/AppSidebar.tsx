@@ -3,9 +3,9 @@ import { useLocation } from "react-router-dom";
 import { NavLink } from "react-router-dom";
 import { 
   Video, 
-  MapPin, 
-  List,
-  GalleryHorizontal
+  Home,
+  Map,
+  User
 } from "lucide-react";
 
 import {
@@ -18,13 +18,17 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarTrigger,
+  SidebarFooter,
 } from "@/components/ui/sidebar";
+
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 
 const navigationItems = [
   { 
     title: "Home", 
     url: "/", 
-    icon: GalleryHorizontal 
+    icon: Home
   },
   { 
     title: "Video Analyzer", 
@@ -32,14 +36,9 @@ const navigationItems = [
     icon: Video 
   },
   { 
-    title: "Itinerary", 
+    title: "Trips", 
     url: "/itinerary", 
-    icon: List 
-  },
-  { 
-    title: "Map View", 
-    url: "/map", 
-    icon: MapPin 
+    icon: Map 
   },
 ];
 
@@ -54,6 +53,9 @@ const AppSidebar = () => {
     isActive 
       ? "flex items-center gap-3 p-2 rounded-md bg-primary/10 text-primary font-medium" 
       : "flex items-center gap-3 p-2 rounded-md hover:bg-muted/80 transition-colors";
+
+  // Mock user state - in a real app, this would come from authentication
+  const isSignedIn = false;
 
   return (
     <Sidebar
@@ -88,6 +90,27 @@ const AppSidebar = () => {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+
+      <SidebarFooter className="mt-auto border-t p-4">
+        {isSignedIn ? (
+          <div className="flex items-center gap-3">
+            <Avatar>
+              <AvatarFallback className="bg-primary/10 text-primary">
+                JD
+              </AvatarFallback>
+            </Avatar>
+            <div className="flex flex-col">
+              <span className="text-sm font-medium">John Doe</span>
+              <span className="text-xs text-muted-foreground">john@example.com</span>
+            </div>
+          </div>
+        ) : (
+          <Button className="w-full bg-ocean hover:bg-ocean-dark" variant="default">
+            <User className="mr-2 h-4 w-4" />
+            Sign In
+          </Button>
+        )}
+      </SidebarFooter>
     </Sidebar>
   );
 };
