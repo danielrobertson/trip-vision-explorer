@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -12,7 +13,7 @@ import {
   Video,
   ArrowDown,
   Share,
-  Export,
+  ExternalLink,
   Link 
 } from "lucide-react";
 
@@ -96,7 +97,6 @@ const ItineraryPage = () => {
     }).catch(() => {
       toast("Failed to copy link", {
         description: "Please try copying the URL manually.",
-        variant: "destructive"
       });
     });
   };
@@ -142,7 +142,7 @@ const ItineraryPage = () => {
           className="bg-white hover:bg-gray-100"
           onClick={createGoogleMapsList}
         >
-          <Export className="mr-2 h-4 w-4" />
+          <ExternalLink className="mr-2 h-4 w-4" />
           Export Locations (CSV)
         </Button>
         <Button 
