@@ -5,9 +5,8 @@ import {
   Video, 
   Home,
   Map,
-  User,
   Plus,
-  Search
+  Compass
 } from "lucide-react";
 
 import {
@@ -19,14 +18,13 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarTrigger,
   SidebarFooter,
 } from "@/components/ui/sidebar";
 
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 
-const navigationItems = [
+const primaryNavItems = [
   { 
     title: "Home", 
     url: "/", 
@@ -37,6 +35,9 @@ const navigationItems = [
     url: "/trips", 
     icon: Map 
   },
+];
+
+const toolsNavItems = [
   { 
     title: "Create Trip", 
     url: "/trips/create", 
@@ -58,36 +59,60 @@ const AppSidebar = () => {
   
   const getNavCls = ({ isActive }: { isActive: boolean }) =>
     isActive 
-      ? "flex items-center gap-3 p-2 rounded-md bg-primary/10 text-primary font-medium" 
-      : "flex items-center gap-3 p-2 rounded-md hover:bg-muted/80 transition-colors";
+      ? "flex items-center gap-3 p-2 rounded-md bg-sidebar-accent text-primary font-medium" 
+      : "flex items-center gap-3 p-2 rounded-md text-sidebar-foreground hover:bg-sidebar-accent/50 transition-colors";
 
   // Mock user state - in a real app, this would come from authentication
   const isSignedIn = false;
 
   return (
     <Sidebar
-      className="border-r transition-all duration-300 w-64 md:w-64"
+      className="border-r transition-all duration-300 w-64 md:w-[240px] bg-white"
       collapsible="none"
     >
-      <div className="flex h-16 items-center justify-center border-b">
+      <div className="flex h-16 items-center justify-start border-b px-6">
+        <Compass className="h-5 w-5 text-ocean mr-2" />
         <h2 className="font-bold text-ocean-dark text-lg">
           TripTrace
         </h2>
       </div>
 
-      <SidebarContent className="p-3">
+      <SidebarContent className="p-4">
         <SidebarGroup>
-          <SidebarGroupLabel className="text-sm text-muted-foreground mb-2">
-            Trip Planning
+          <SidebarGroupLabel className="text-xs text-muted-foreground px-2 mb-1">
+            Navigation
           </SidebarGroupLabel>
 
           <SidebarGroupContent>
             <SidebarMenu>
-              {navigationItems.map((item) => (
+              {primaryNavItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
                     <NavLink to={item.url} end className={getNavCls}>
-                      <item.icon className={`h-5 w-5 ${isActive(item.url) ? "text-primary" : "text-muted-foreground"}`} />
+                      <item.icon className={`h-4 w-4 ${isActive(item.url) ? "text-ocean" : "text-muted-foreground"}`} />
+                      <span>{item.title}</span>
+                    </NavLink>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+        
+        <div className="my-2 border-t border-border/40"></div>
+        
+        <SidebarGroup>
+          <SidebarGroupLabel className="text-xs text-muted-foreground px-2 mb-1">
+            Tools
+          </SidebarGroupLabel>
+
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {toolsNavItems.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton asChild>
+                    <NavLink to={item.url} end className={getNavCls}>
+                      <item.icon className={`h-4 w-4 ${isActive(item.url) ? "text-ocean" : "text-muted-foreground"}`} />
                       <span>{item.title}</span>
                     </NavLink>
                   </SidebarMenuButton>
@@ -113,7 +138,6 @@ const AppSidebar = () => {
           </div>
         ) : (
           <Button className="w-full bg-ocean hover:bg-ocean-dark" variant="default">
-            <User className="mr-2 h-4 w-4" />
             Sign In
           </Button>
         )}

@@ -31,7 +31,7 @@ const CreateTripPage = () => {
     <div className="container max-w-6xl space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold">Create New Trip</h1>
+          <h1 className="text-3xl font-bold text-gray-800">Create New Trip</h1>
           <p className="text-muted-foreground">
             Build your perfect itinerary
           </p>
@@ -39,10 +39,11 @@ const CreateTripPage = () => {
         
         <Button 
           variant="outline" 
-          onClick={() => window.history.back()}
+          onClick={() => navigate('/trips')}
+          className="border-gray-200"
         >
           <ArrowLeft className="mr-2 h-4 w-4" />
-          Back
+          Back to Trips
         </Button>
       </div>
 
@@ -61,8 +62,8 @@ const CreateTripPage = () => {
         </TabsContent>
         
         <TabsContent value="video" className="space-y-4">
-          <div className="text-center py-8">
-            <Video className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+          <div className="text-center py-12 bg-gray-50 rounded-lg border border-gray-100">
+            <Video className="h-16 w-16 text-ocean mx-auto mb-4 opacity-70" />
             <h2 className="text-xl font-medium mb-2">Video Analysis</h2>
             <p className="text-muted-foreground max-w-md mx-auto mb-6">
               Go to the Video Analyzer page to extract attractions from a travel video

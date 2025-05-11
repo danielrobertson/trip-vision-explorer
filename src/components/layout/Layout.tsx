@@ -5,7 +5,7 @@ import Header from "./Header";
 
 const Layout = () => {
   return (
-    <div className="min-h-screen w-full flex">
+    <div className="min-h-screen w-full flex bg-background">
       <AppSidebar />
       <div className="flex flex-col flex-1 min-h-screen">
         <Header />
