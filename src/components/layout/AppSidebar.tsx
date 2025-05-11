@@ -7,8 +7,6 @@ import {
   Map,
   Plus,
   Compass,
-  ChevronLeft,
-  ChevronRight
 } from "lucide-react";
 
 import {
@@ -21,11 +19,11 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarFooter,
+  useSidebar
 } from "@/components/ui/sidebar";
 
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
 import { cn } from "@/lib/utils";
 
 const primaryNavItems = [
@@ -57,7 +55,8 @@ const toolsNavItems = [
 const AppSidebar = () => {
   const location = useLocation();
   const currentPath = location.pathname;
-  const [collapsed, setCollapsed] = useState(false);
+  const { state } = useSidebar();
+  const collapsed = state === "collapsed";
 
   const isActive = (path: string) => 
     path === "/" ? currentPath === path : currentPath.startsWith(path);
@@ -73,17 +72,13 @@ const AppSidebar = () => {
   // Mock user state - in a real app, this would come from authentication
   const isSignedIn = false;
 
-  const toggleSidebar = () => {
-    setCollapsed(!collapsed);
-  };
-
   return (
     <Sidebar
       className={cn(
         "border-r transition-all duration-300 bg-background", 
         collapsed ? "w-16" : "w-64 md:w-[240px]"
       )}
-      collapsible="none"
+      collapsible="icon"
     >
       <div className="flex h-14 items-center justify-start px-4 border-b">
         <Compass className="h-5 w-5 text-primary mr-2" />
@@ -96,27 +91,17 @@ const AppSidebar = () => {
 
       <SidebarContent className="p-2">
         <SidebarGroup>
-          <div className="flex items-center justify-between px-2 mb-1 mt-2">
-            {!collapsed && (
-              <SidebarGroupLabel className="text-xs text-muted-foreground">
-                Navigation
-              </SidebarGroupLabel>
-            )}
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              onClick={toggleSidebar} 
-              className="h-6 w-6 text-muted-foreground hover:text-foreground ml-auto"
-            >
-              {collapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
-            </Button>
-          </div>
+          {!collapsed && (
+            <SidebarGroupLabel className="text-xs text-muted-foreground px-2 mb-1 mt-2">
+              Navigation
+            </SidebarGroupLabel>
+          )}
 
           <SidebarGroupContent>
             <SidebarMenu>
               {primaryNavItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
+                  <SidebarMenuButton asChild tooltip={collapsed ? item.title : undefined}>
                     <NavLink to={item.url} end className={getNavCls}>
                       <item.icon className={`h-4 w-4 ${isActive(item.url) ? "text-primary" : "text-muted-foreground"}`} />
                       {!collapsed && <span>{item.title}</span>}
@@ -139,7 +124,7 @@ const AppSidebar = () => {
             <SidebarMenu>
               {toolsNavItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
+                  <SidebarMenuButton asChild tooltip={collapsed ? item.title : undefined}>
                     <NavLink to={item.url} end className={getNavCls}>
                       <item.icon className={`h-4 w-4 ${isActive(item.url) ? "text-primary" : "text-muted-foreground"}`} />
                       {!collapsed && <span>{item.title}</span>}
