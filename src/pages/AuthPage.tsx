@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, Navigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -33,10 +33,21 @@ const AuthPage = () => {
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [activeTab, setActiveTab] = useState("login");
+  const [redirectPath, setRedirectPath] = useState("/");
+  
+  // Get the redirect path from localStorage
+  useEffect(() => {
+    const savedPath = localStorage.getItem("redirectAfterAuth");
+    if (savedPath) {
+      setRedirectPath(savedPath);
+    }
+  }, []);
 
-  // If user is already authenticated, redirect to home page
+  // If user is already authenticated, redirect to the intended destination or home page
   if (user && !isLoading) {
-    return <Navigate to="/" />;
+    // Clear the saved redirect path
+    localStorage.removeItem("redirectAfterAuth");
+    return <Navigate to={redirectPath} />;
   }
 
   // Login form setup
@@ -63,7 +74,7 @@ const AuthPage = () => {
     try {
       const { error } = await signIn(values.email, values.password);
       if (!error) {
-        navigate("/");
+        // Will be redirected by the useEffect above
       }
     } finally {
       setIsSubmitting(false);

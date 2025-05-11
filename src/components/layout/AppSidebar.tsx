@@ -1,5 +1,5 @@
 
-import { useLocation, NavLink } from "react-router-dom";
+import { useLocation, NavLink, useNavigate } from "react-router-dom";
 import { 
   Video, 
   Home,
@@ -38,8 +38,7 @@ const primaryNavItems = [
   { 
     title: "My Trips", 
     url: "/trips", 
-    icon: Map,
-    requiresAuth: true
+    icon: Map
   },
 ];
 
@@ -47,19 +46,18 @@ const toolsNavItems = [
   { 
     title: "Create Trip", 
     url: "/trips/create", 
-    icon: Plus, 
-    requiresAuth: true
+    icon: Plus
   },
   { 
     title: "Video Analyzer", 
     url: "/analyze", 
-    icon: Video,
-    requiresAuth: true 
+    icon: Video
   },
 ];
 
 const AppSidebar = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const currentPath = location.pathname;
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
@@ -79,6 +77,16 @@ const AppSidebar = () => {
   const handleSignOut = async () => {
     await signOut();
     window.location.href = "/auth";
+  };
+
+  const handleNavigation = (e: React.MouseEvent<HTMLAnchorElement>, url: string) => {
+    if (!user) {
+      e.preventDefault();
+      // Store the intended destination in localStorage
+      localStorage.setItem("redirectAfterAuth", url);
+      navigate("/auth");
+    }
+    // If user is authenticated, regular navigation occurs
   };
 
   const getInitials = (name: string) => {
@@ -117,21 +125,21 @@ const AppSidebar = () => {
 
           <SidebarGroupContent>
             <SidebarMenu>
-              {primaryNavItems.map((item) => {
-                // Skip items requiring auth if user is not authenticated
-                if (item.requiresAuth && !user) return null;
-                
-                return (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton asChild tooltip={collapsed ? item.title : undefined}>
-                      <NavLink to={item.url} end className={getNavCls}>
-                        <item.icon className={`h-4 w-4 ${isActive(item.url) ? "text-primary" : "text-muted-foreground"}`} />
-                        {!collapsed && <span>{item.title}</span>}
-                      </NavLink>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                );
-              })}
+              {primaryNavItems.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton asChild tooltip={collapsed ? item.title : undefined}>
+                    <NavLink 
+                      to={item.url} 
+                      end 
+                      className={getNavCls}
+                      onClick={(e) => handleNavigation(e, item.url)}
+                    >
+                      <item.icon className={`h-4 w-4 ${isActive(item.url) ? "text-primary" : "text-muted-foreground"}`} />
+                      {!collapsed && <span>{item.title}</span>}
+                    </NavLink>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
@@ -145,21 +153,21 @@ const AppSidebar = () => {
 
           <SidebarGroupContent>
             <SidebarMenu>
-              {toolsNavItems.map((item) => {
-                // Skip items requiring auth if user is not authenticated
-                if (item.requiresAuth && !user) return null;
-                
-                return (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton asChild tooltip={collapsed ? item.title : undefined}>
-                      <NavLink to={item.url} end className={getNavCls}>
-                        <item.icon className={`h-4 w-4 ${isActive(item.url) ? "text-primary" : "text-muted-foreground"}`} />
-                        {!collapsed && <span>{item.title}</span>}
-                      </NavLink>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                );
-              })}
+              {toolsNavItems.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton asChild tooltip={collapsed ? item.title : undefined}>
+                    <NavLink 
+                      to={item.url} 
+                      end 
+                      className={getNavCls}
+                      onClick={(e) => handleNavigation(e, item.url)}
+                    >
+                      <item.icon className={`h-4 w-4 ${isActive(item.url) ? "text-primary" : "text-muted-foreground"}`} />
+                      {!collapsed && <span>{item.title}</span>}
+                    </NavLink>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
@@ -195,7 +203,7 @@ const AppSidebar = () => {
           <Button 
             className={collapsed ? "p-2 w-full" : "w-full"} 
             variant="default"
-            onClick={() => window.location.href = "/auth"}
+            onClick={() => navigate("/auth")}
           >
             {collapsed ? <LogIn className="h-4 w-4" /> : (
               <>
