@@ -2,10 +2,11 @@
 import { Button } from "@/components/ui/button";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Plus } from "lucide-react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const Header = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const showNewButton = !location.pathname.includes("/trips/create");
   
   return (
@@ -24,7 +25,7 @@ const Header = () => {
           <Button 
             size="sm" 
             variant="default"
-            onClick={() => window.location.href = '/trips/create'}
+            onClick={() => navigate('/trips/create')}
           >
             <Plus className="mr-1 h-4 w-4" />
             New Trip
