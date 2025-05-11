@@ -4,13 +4,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { 
   MapPin, 
   Video, 
   GalleryHorizontal, 
-  ArrowRight 
+  ArrowRight,
+  ArrowLeft 
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import AttractionCard from "@/components/attractions/AttractionCard";
@@ -48,8 +49,17 @@ const AnalyzerPage = () => {
     }, 3000);
   };
 
-  const handleViewItinerary = () => {
-    navigate('/itinerary');
+  const handleCreateTrip = () => {
+    // In a real app, this would send the extracted data to the backend
+    // For now we'll just navigate to the trips page
+    toast({
+      title: "Trip created!",
+      description: "Your trip has been created based on the video analysis.",
+    });
+    
+    setTimeout(() => {
+      navigate('/trips');
+    }, 1500);
   };
 
   const handleViewMap = () => {
@@ -58,7 +68,7 @@ const AnalyzerPage = () => {
 
   return (
     <div className="container max-w-6xl space-y-6">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold">Video Analyzer</h1>
           <p className="text-muted-foreground">
@@ -66,21 +76,24 @@ const AnalyzerPage = () => {
           </p>
         </div>
         
-        {analyzed && (
-          <div className="flex gap-2">
+        <div className="flex gap-2">
+          <Button 
+            variant="outline" 
+            onClick={() => navigate('/trips/create')}
+          >
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Back to Trip Creator
+          </Button>
+          
+          {analyzed && (
             <Button 
-              variant="outline"
               onClick={handleViewMap}
             >
               <MapPin className="mr-2 h-4 w-4" />
-              View Map
+              View on Map
             </Button>
-            <Button onClick={handleViewItinerary}>
-              <GalleryHorizontal className="mr-2 h-4 w-4" />
-              Create Itinerary
-            </Button>
-          </div>
-        )}
+          )}
+        </div>
       </div>
 
       <Card className="overflow-hidden border shadow-sm">
@@ -132,8 +145,8 @@ const AnalyzerPage = () => {
               ))}
             </div>
             <div className="flex justify-center mt-8">
-              <Button onClick={handleViewItinerary}>
-                Create Itinerary <ArrowRight className="ml-2 h-4 w-4" />
+              <Button onClick={handleCreateTrip} className="bg-ocean hover:bg-ocean-dark">
+                Create Trip from Video <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </div>
           </TabsContent>

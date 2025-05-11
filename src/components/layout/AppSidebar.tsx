@@ -5,7 +5,9 @@ import {
   Video, 
   Home,
   Map,
-  User
+  User,
+  Plus,
+  Search
 } from "lucide-react";
 
 import {
@@ -31,14 +33,19 @@ const navigationItems = [
     icon: Home
   },
   { 
+    title: "My Trips", 
+    url: "/trips", 
+    icon: Map 
+  },
+  { 
+    title: "Create Trip", 
+    url: "/trips/create", 
+    icon: Plus 
+  },
+  { 
     title: "Video Analyzer", 
     url: "/analyze", 
     icon: Video 
-  },
-  { 
-    title: "Trips", 
-    url: "/trips", 
-    icon: Map 
   },
 ];
 
@@ -71,7 +78,7 @@ const AppSidebar = () => {
       <SidebarContent className="p-3">
         <SidebarGroup>
           <SidebarGroupLabel className="text-sm text-muted-foreground mb-2">
-            Navigation
+            Trip Planning
           </SidebarGroupLabel>
 
           <SidebarGroupContent>

@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Video, Lock, MapPin, ArrowRight, Plus } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 // Mock data for trips
 const mockTrips = [
@@ -60,10 +61,16 @@ const mockTrips = [
 const TripsPage = () => {
   const navigate = useNavigate();
   const [featuredTrip, ...otherTrips] = mockTrips;
+  const [tripSource, setTripSource] = useState<"all" | "video" | "manual">("all");
   
   // In a real app, this would come from user authentication/subscription state
   const freeTripsLimit = 3;
   const userIsPremium = false;
+
+  // Filter trips based on the selected source
+  const filteredTrips = tripSource === "all" 
+    ? otherTrips 
+    : otherTrips.filter((_, index) => tripSource === "video" ? index % 2 === 0 : index % 2 === 1);
   
   return (
     <div className="container max-w-6xl space-y-8">
@@ -71,17 +78,26 @@ const TripsPage = () => {
         <div>
           <h1 className="text-3xl font-bold">My Trips</h1>
           <p className="text-muted-foreground">
-            Your video-based travel itineraries
+            Your travel itineraries
           </p>
         </div>
         
-        <Button 
-          onClick={() => navigate('/analyze')} 
-          className="bg-ocean hover:bg-ocean-dark"
-        >
-          <Plus className="mr-2 h-4 w-4" />
-          New Trip
-        </Button>
+        <div className="flex gap-2">
+          <Button 
+            variant="outline"
+            onClick={() => navigate('/analyze')} 
+          >
+            <Video className="mr-2 h-4 w-4" />
+            Video Analysis
+          </Button>
+          <Button 
+            onClick={() => navigate('/trips/create')} 
+            className="bg-ocean hover:bg-ocean-dark"
+          >
+            <Plus className="mr-2 h-4 w-4" />
+            New Trip
+          </Button>
+        </div>
       </div>
       
       {/* Featured/Latest Trip */}
@@ -109,72 +125,65 @@ const TripsPage = () => {
                   Added {featuredTrip.date}
                 </Badge>
               </div>
-              <Button 
-                className="bg-lavender hover:bg-lavender-dark text-white"
-                onClick={() => navigate(`/itinerary`)}
-              >
-                View Itinerary <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
+              <div className="flex gap-2">
+                <Button 
+                  className="bg-lavender hover:bg-lavender-dark text-white"
+                  onClick={() => navigate(`/itinerary`)}
+                >
+                  View Itinerary <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+                <Button 
+                  variant="outline" 
+                  className="bg-white/10 text-white border-white/30 hover:bg-white/20"
+                  onClick={() => navigate(`/map`)}
+                >
+                  <MapPin className="mr-2 h-4 w-4" /> View on Map
+                </Button>
+              </div>
             </div>
           </div>
         </Card>
       </div>
       
-      {/* Trip List */}
+      {/* Trip List with Tabs */}
       <div className="space-y-5">
-        <h2 className="text-xl font-semibold">All Trips</h2>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {otherTrips.map((trip, index) => {
-            const isLocked = !userIsPremium && index >= (freeTripsLimit - 1);
-            
-            return (
-              <Card key={trip.id} className={`overflow-hidden border ${isLocked ? 'opacity-90' : ''}`}>
-                <div className="relative">
-                  <img 
-                    src={trip.thumbnail} 
-                    alt={trip.title}
-                    className="h-48 w-full object-cover"
-                  />
-                  {isLocked && (
-                    <div className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center">
-                      <Lock className="h-8 w-8 text-white mb-2" />
-                      <span className="text-white font-medium">Premium Content</span>
-                    </div>
-                  )}
-                </div>
-                <CardContent className="p-4">
-                  <h3 className="text-lg font-semibold mb-2">{trip.title}</h3>
-                  <p className="text-muted-foreground text-sm mb-4 line-clamp-2">{trip.description}</p>
-                  <div className="flex justify-between items-end">
-                    <div className="flex flex-wrap gap-2">
-                      <Badge variant="outline">
-                        <Video className="h-3 w-3 mr-1" /> {trip.duration}
-                      </Badge>
-                      <Badge variant="outline">
-                        <MapPin className="h-3 w-3 mr-1" /> {trip.attractions}
-                      </Badge>
-                    </div>
-                    
-                    {isLocked ? (
-                      <Button size="sm" className="bg-ocean hover:bg-ocean-dark">
-                        Unlock
-                      </Button>
-                    ) : (
-                      <Button 
-                        size="sm" 
-                        variant="outline"
-                        onClick={() => navigate(`/itinerary`)}
-                      >
-                        View Trip
-                      </Button>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-            );
-          })}
-        </div>
+        <Tabs defaultValue="all" onValueChange={(v) => setTripSource(v as "all" | "video" | "manual")}>
+          <div className="flex justify-between items-center">
+            <h2 className="text-xl font-semibold">All Trips</h2>
+            <TabsList>
+              <TabsTrigger value="all">All</TabsTrigger>
+              <TabsTrigger value="video">From Videos</TabsTrigger>
+              <TabsTrigger value="manual">Manual</TabsTrigger>
+            </TabsList>
+          </div>
+
+          <TabsContent value="all" className="mt-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {otherTrips.map((trip, index) => {
+                const isLocked = !userIsPremium && index >= (freeTripsLimit - 1);
+                return renderTripCard(trip, isLocked, navigate);
+              })}
+            </div>
+          </TabsContent>
+
+          <TabsContent value="video" className="mt-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {otherTrips.filter((_, index) => index % 2 === 0).map((trip, index) => {
+                const isLocked = !userIsPremium && index >= Math.floor(freeTripsLimit / 2);
+                return renderTripCard(trip, isLocked, navigate);
+              })}
+            </div>
+          </TabsContent>
+
+          <TabsContent value="manual" className="mt-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {otherTrips.filter((_, index) => index % 2 === 1).map((trip, index) => {
+                const isLocked = !userIsPremium && index >= Math.floor(freeTripsLimit / 2);
+                return renderTripCard(trip, isLocked, navigate);
+              })}
+            </div>
+          </TabsContent>
+        </Tabs>
         
         {!userIsPremium && (
           <Card className="bg-lavender/10 border-lavender/30 p-6 mt-8">
@@ -193,5 +202,61 @@ const TripsPage = () => {
     </div>
   );
 };
+
+// Helper function to render trip cards
+const renderTripCard = (trip: any, isLocked: boolean, navigate: Function) => (
+  <Card key={trip.id} className={`overflow-hidden border ${isLocked ? 'opacity-90' : ''}`}>
+    <div className="relative">
+      <img 
+        src={trip.thumbnail} 
+        alt={trip.title}
+        className="h-48 w-full object-cover"
+      />
+      {isLocked && (
+        <div className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center">
+          <Lock className="h-8 w-8 text-white mb-2" />
+          <span className="text-white font-medium">Premium Content</span>
+        </div>
+      )}
+    </div>
+    <CardContent className="p-4">
+      <h3 className="text-lg font-semibold mb-2">{trip.title}</h3>
+      <p className="text-muted-foreground text-sm mb-4 line-clamp-2">{trip.description}</p>
+      <div className="flex justify-between items-end">
+        <div className="flex flex-wrap gap-2">
+          <Badge variant="outline">
+            <Video className="h-3 w-3 mr-1" /> {trip.duration}
+          </Badge>
+          <Badge variant="outline">
+            <MapPin className="h-3 w-3 mr-1" /> {trip.attractions}
+          </Badge>
+        </div>
+        
+        {isLocked ? (
+          <Button size="sm" className="bg-ocean hover:bg-ocean-dark">
+            Unlock
+          </Button>
+        ) : (
+          <div className="flex gap-2">
+            <Button 
+              size="sm" 
+              variant="outline"
+              onClick={() => navigate(`/itinerary`)}
+            >
+              View Trip
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => navigate(`/map`)}
+            >
+              <MapPin className="h-4 w-4" />
+            </Button>
+          </div>
+        )}
+      </div>
+    </CardContent>
+  </Card>
+);
 
 export default TripsPage;

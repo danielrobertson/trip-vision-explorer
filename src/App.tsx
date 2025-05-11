@@ -11,6 +11,7 @@ import AnalyzerPage from "./pages/AnalyzerPage";
 import ItineraryPage from "./pages/ItineraryPage";
 import MapViewPage from "./pages/MapViewPage";
 import TripsPage from "./pages/TripsPage";
+import CreateTripPage from "./pages/CreateTripPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -28,6 +29,7 @@ const App = () => (
               <Route path="/analyze" element={<AnalyzerPage />} />
               <Route path="/itinerary" element={<ItineraryPage />} />
               <Route path="/trips" element={<TripsPage />} />
+              <Route path="/trips/create" element={<CreateTripPage />} />
               <Route path="/map" element={<MapViewPage />} />
               <Route path="*" element={<NotFound />} />
             </Route>
