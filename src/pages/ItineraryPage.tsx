@@ -1,23 +1,105 @@
-
 import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
+import { toast } from "@/components/ui/sonner";
 import { 
   Clock, 
   MapPin, 
   ArrowLeft, 
   GalleryHorizontal,
   Video,
-  ArrowDown 
+  ArrowDown,
+  Share,
+  Export,
+  Link 
 } from "lucide-react";
 
 // Mock data
 import { mockAttractions } from "@/lib/mockData";
+import { AttractionType } from "@/types";
 
 const ItineraryPage = () => {
   const [viewType, setViewType] = useState<'timeline' | 'day'>('timeline');
+
+  const exportToGoogleMaps = () => {
+    // Create a Google Maps URL with all attractions
+    const baseUrl = "https://www.google.com/maps/dir/?api=1";
+    const origin = encodeURIComponent(mockAttractions[0].name);
+    const destination = encodeURIComponent(mockAttractions[mockAttractions.length - 1].name);
+    
+    // Create waypoints from all attractions except first and last
+    const waypoints = mockAttractions
+      .slice(1, -1)
+      .map(attr => encodeURIComponent(attr.name))
+      .join('|');
+    
+    // Build the URL
+    let googleMapsUrl = `${baseUrl}&origin=${origin}&destination=${destination}`;
+    if (waypoints) {
+      googleMapsUrl += `&waypoints=${waypoints}`;
+    }
+    
+    // Open in new tab
+    window.open(googleMapsUrl, '_blank');
+    
+    toast("Trip exported to Google Maps", {
+      description: "The trip has been opened in a new tab with all locations as pins.",
+      action: {
+        label: "Dismiss",
+        onClick: () => console.log("Toast dismissed"),
+      },
+    });
+  };
+
+  const createGoogleMapsList = () => {
+    // Create a CSV with all attractions for import into Google Maps
+    const csvContent = [
+      "name,description,latitude,longitude",
+      ...mockAttractions.map(attr => {
+        const lat = attr.coordinates?.lat || 0;
+        const lng = attr.coordinates?.lng || 0;
+        return `"${attr.name}","${attr.description}",${lat},${lng}`;
+      })
+    ].join('\n');
+    
+    // Create a blob and download it
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'tripTrace-locations.csv';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    
+    toast("Trip locations exported", {
+      description: "CSV file downloaded. You can import this into Google Maps or other mapping apps.",
+      action: {
+        label: "Dismiss",
+        onClick: () => console.log("Toast dismissed"),
+      },
+    });
+  };
+
+  const shareDirectLink = () => {
+    // Create a shareable link
+    const shareUrl = window.location.href;
+    
+    // Copy to clipboard
+    navigator.clipboard.writeText(shareUrl).then(() => {
+      toast("Link copied to clipboard", {
+        description: "Share this link to let others view this trip.",
+      });
+    }).catch(() => {
+      toast("Failed to copy link", {
+        description: "Please try copying the URL manually.",
+        variant: "destructive"
+      });
+    });
+  };
 
   return (
     <div className="container max-w-6xl space-y-6">
@@ -44,6 +126,36 @@ const ItineraryPage = () => {
         </div>
       </div>
 
+      <div className="flex flex-wrap gap-3 mb-2">
+        <Button 
+          variant="outline" 
+          size="sm" 
+          className="bg-white hover:bg-gray-100"
+          onClick={exportToGoogleMaps}
+        >
+          <MapPin className="mr-2 h-4 w-4" />
+          Open in Google Maps
+        </Button>
+        <Button 
+          variant="outline" 
+          size="sm" 
+          className="bg-white hover:bg-gray-100"
+          onClick={createGoogleMapsList}
+        >
+          <Export className="mr-2 h-4 w-4" />
+          Export Locations (CSV)
+        </Button>
+        <Button 
+          variant="outline" 
+          size="sm" 
+          className="bg-white hover:bg-gray-100"
+          onClick={shareDirectLink}
+        >
+          <Link className="mr-2 h-4 w-4" />
+          Copy Link
+        </Button>
+      </div>
+
       <Tabs 
         defaultValue="timeline" 
         className="w-full"
@@ -55,7 +167,7 @@ const ItineraryPage = () => {
             <TabsTrigger value="day">Day Planner</TabsTrigger>
           </TabsList>
           
-          <Button variant="outline">
+          <Button variant="outline" onClick={() => window.location.href = '/map'}>
             <MapPin className="mr-2 h-4 w-4" />
             View on Map
           </Button>
@@ -73,7 +185,7 @@ const ItineraryPage = () => {
   );
 };
 
-const TimelineView = ({ attractions }) => {
+const TimelineView = ({ attractions }: { attractions: AttractionType[] }) => {
   return (
     <div className="relative">
       <div className="absolute left-8 top-0 bottom-0 w-1 bg-lavender-light"></div>
@@ -158,7 +270,7 @@ const TimelineView = ({ attractions }) => {
   );
 };
 
-const DayPlannerView = ({ attractions }) => {
+const DayPlannerView = ({ attractions }: { attractions: AttractionType[] }) => {
   // Split attractions into days (mock implementation)
   const day1 = attractions.slice(0, 4);
   const day2 = attractions.slice(4);
@@ -171,7 +283,7 @@ const DayPlannerView = ({ attractions }) => {
   );
 };
 
-const DayCard = ({ day, attractions }) => {
+const DayCard = ({ day, attractions }: { day: number, attractions: AttractionType[] }) => {
   const [expanded, setExpanded] = useState(true);
   
   return (
