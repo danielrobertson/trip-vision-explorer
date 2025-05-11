@@ -10,6 +10,7 @@ import HomePage from "./pages/HomePage";
 import AnalyzerPage from "./pages/AnalyzerPage";
 import ItineraryPage from "./pages/ItineraryPage";
 import MapViewPage from "./pages/MapViewPage";
+import TripsPage from "./pages/TripsPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -26,6 +27,7 @@ const App = () => (
               <Route index element={<HomePage />} />
               <Route path="/analyze" element={<AnalyzerPage />} />
               <Route path="/itinerary" element={<ItineraryPage />} />
+              <Route path="/trips" element={<TripsPage />} />
               <Route path="/map" element={<MapViewPage />} />
               <Route path="*" element={<NotFound />} />
             </Route>

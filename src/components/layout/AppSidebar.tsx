@@ -37,7 +37,7 @@ const navigationItems = [
   },
   { 
     title: "Trips", 
-    url: "/itinerary", 
+    url: "/trips", 
     icon: Map 
   },
 ];
