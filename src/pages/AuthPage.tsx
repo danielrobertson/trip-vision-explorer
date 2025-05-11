@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate, Navigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
@@ -121,8 +120,8 @@ const AuthPage = () => {
             <TabsTrigger value="signup">Sign Up</TabsTrigger>
           </TabsList>
           
-          <TabsContent value="login">
-            <Card className="border shadow-sm">
+          <TabsContent value="login" className="flex justify-center">
+            <Card className="border shadow-sm w-full">
               <CardHeader className="px-4 py-5 md:px-6 md:py-6">
                 <CardTitle>Login</CardTitle>
                 <CardDescription>Enter your credentials to access your account</CardDescription>
@@ -210,8 +209,8 @@ const AuthPage = () => {
             </Card>
           </TabsContent>
           
-          <TabsContent value="signup">
-            <Card className="border shadow-sm">
+          <TabsContent value="signup" className="flex justify-center">
+            <Card className="border shadow-sm w-full">
               <CardHeader className="px-4 py-5 md:px-6 md:py-6">
                 <CardTitle>Create an Account</CardTitle>
                 <CardDescription>Enter your details to create a new account</CardDescription>
