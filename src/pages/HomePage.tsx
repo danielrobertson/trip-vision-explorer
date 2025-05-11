@@ -12,10 +12,10 @@ const HomePage = () => {
       {/* Hero Section */}
       <section className="py-12 text-center space-y-6">
         <h1 className="text-4xl md:text-5xl font-bold text-gray-900">
-          Travel Smarter with <span className="text-ocean">TravelCast</span>
+          Travel Smarter with <span className="text-ocean">TripTrace</span>
         </h1>
         <p className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto">
-          Transform travel videos into custom itineraries. Extract attractions, create maps, and plan your perfect trip with AI-powered insights.
+          Traces the journey from YouTube videos to create personalized itineraries, maps, and plan trips with AI-powered insights.
         </p>
         <div className="flex flex-wrap gap-4 justify-center">
           <Button 

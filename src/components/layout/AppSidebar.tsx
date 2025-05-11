@@ -18,7 +18,6 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarTrigger,
-  useSidebar,
 } from "@/components/ui/sidebar";
 
 const navigationItems = [
@@ -45,7 +44,6 @@ const navigationItems = [
 ];
 
 const AppSidebar = () => {
-  const { collapsed } = useSidebar();
   const location = useLocation();
   const currentPath = location.pathname;
 
@@ -59,25 +57,18 @@ const AppSidebar = () => {
 
   return (
     <Sidebar
-      className={`border-r transition-all duration-300 ${
-        collapsed ? "w-16" : "w-64"
-      }`}
-      collapsible
+      className="border-r transition-all duration-300 w-64 md:w-64"
+      collapsible="none"
     >
       <div className="flex h-16 items-center justify-center border-b">
-        <h2 className={`font-bold text-ocean-dark text-lg ${collapsed ? "hidden" : "block"}`}>
-          TravelCast
+        <h2 className="font-bold text-ocean-dark text-lg">
+          TripTrace
         </h2>
-        {collapsed && (
-          <span className="text-ocean-dark font-bold text-lg">TC</span>
-        )}
       </div>
 
       <SidebarContent className="p-3">
         <SidebarGroup>
-          <SidebarGroupLabel 
-            className={`${collapsed ? "sr-only" : "text-sm text-muted-foreground mb-2"}`}
-          >
+          <SidebarGroupLabel className="text-sm text-muted-foreground mb-2">
             Navigation
           </SidebarGroupLabel>
 
@@ -88,7 +79,7 @@ const AppSidebar = () => {
                   <SidebarMenuButton asChild>
                     <NavLink to={item.url} end className={getNavCls}>
                       <item.icon className={`h-5 w-5 ${isActive(item.url) ? "text-primary" : "text-muted-foreground"}`} />
-                      {!collapsed && <span>{item.title}</span>}
+                      <span>{item.title}</span>
                     </NavLink>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
