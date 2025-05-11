@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Compass } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { Separator } from "@/components/ui/separator";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 // Login form schema
 const loginSchema = z.object({
@@ -38,6 +39,7 @@ const AuthPage = () => {
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [activeTab, setActiveTab] = useState("login");
+  const isMobile = useIsMobile();
 
   // If user is already authenticated, redirect to home page
   if (user && !isLoading) {
@@ -102,8 +104,8 @@ const AuthPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background px-4">
-      <div className="w-full max-w-md">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-background px-4 py-8">
+      <div className="w-full max-w-md mx-auto">
         <div className="mb-6 text-center">
           <div className="flex justify-center mb-2">
             <Compass className="h-10 w-10 text-primary" />
@@ -112,19 +114,19 @@ const AuthPage = () => {
           <p className="text-muted-foreground mt-2">Your travel companion</p>
         </div>
         
-        <Tabs defaultValue="login" value={activeTab} onValueChange={setActiveTab}>
+        <Tabs defaultValue="login" value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="grid grid-cols-2 w-full mb-4">
             <TabsTrigger value="login">Login</TabsTrigger>
             <TabsTrigger value="signup">Sign Up</TabsTrigger>
           </TabsList>
           
           <TabsContent value="login">
-            <Card>
-              <CardHeader>
+            <Card className="border shadow-sm">
+              <CardHeader className={isMobile ? "px-4 py-5" : "px-6 py-6"}>
                 <CardTitle>Login</CardTitle>
                 <CardDescription>Enter your credentials to access your account</CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className={`space-y-4 ${isMobile ? "px-4" : "px-6"}`}>
                 <Button 
                   variant="outline" 
                   className="w-full flex items-center justify-center gap-2"
@@ -195,10 +197,11 @@ const AuthPage = () => {
                   </form>
                 </Form>
               </CardContent>
-              <CardFooter className="flex justify-center">
+              <CardFooter className={`flex justify-center ${isMobile ? "px-4 py-4" : "px-6 py-6"}`}>
                 <Button 
                   variant="link" 
                   onClick={() => setActiveTab("signup")}
+                  className="px-0"
                 >
                   Don't have an account? Sign up
                 </Button>
@@ -207,12 +210,12 @@ const AuthPage = () => {
           </TabsContent>
           
           <TabsContent value="signup">
-            <Card>
-              <CardHeader>
+            <Card className="border shadow-sm">
+              <CardHeader className={isMobile ? "px-4 py-5" : "px-6 py-6"}>
                 <CardTitle>Create an Account</CardTitle>
                 <CardDescription>Enter your details to create a new account</CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className={`space-y-4 ${isMobile ? "px-4" : "px-6"}`}>
                 <Button 
                   variant="outline" 
                   className="w-full flex items-center justify-center gap-2"
@@ -318,10 +321,11 @@ const AuthPage = () => {
                   </form>
                 </Form>
               </CardContent>
-              <CardFooter className="flex justify-center">
+              <CardFooter className={`flex justify-center ${isMobile ? "px-4 py-4" : "px-6 py-6"}`}>
                 <Button 
                   variant="link" 
                   onClick={() => setActiveTab("login")}
+                  className="px-0"
                 >
                   Already have an account? Login
                 </Button>
