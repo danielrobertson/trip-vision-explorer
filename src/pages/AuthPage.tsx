@@ -19,15 +19,10 @@ const loginSchema = z.object({
   password: z.string().min(6, { message: "Password must be at least 6 characters" }),
 });
 
-// Sign up form schema
+// Sign up form schema (simplified)
 const signUpSchema = z.object({
-  fullName: z.string().min(2, { message: "Full name must be at least 2 characters" }),
   email: z.string().email({ message: "Please enter a valid email address" }),
   password: z.string().min(6, { message: "Password must be at least 6 characters" }),
-  confirmPassword: z.string().min(6, { message: "Password must be at least 6 characters" }),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "Passwords do not match",
-  path: ["confirmPassword"],
 });
 
 type LoginFormValues = z.infer<typeof loginSchema>;
@@ -53,14 +48,12 @@ const AuthPage = () => {
     },
   });
 
-  // Sign up form setup
+  // Sign up form setup (simplified)
   const signUpForm = useForm<SignUpFormValues>({
     resolver: zodResolver(signUpSchema),
     defaultValues: {
-      fullName: "",
       email: "",
       password: "",
-      confirmPassword: "",
     },
   });
 
@@ -81,9 +74,8 @@ const AuthPage = () => {
   const onSignUpSubmit = async (values: SignUpFormValues) => {
     setIsSubmitting(true);
     try {
-      const { error } = await signUp(values.email, values.password, {
-        full_name: values.fullName,
-      });
+      // No longer passing fullName metadata since we removed that field
+      const { error } = await signUp(values.email, values.password);
       if (!error) {
         setActiveTab("login");
       }
@@ -240,23 +232,6 @@ const AuthPage = () => {
                   <form onSubmit={signUpForm.handleSubmit(onSignUpSubmit)} className="space-y-4">
                     <FormField
                       control={signUpForm.control}
-                      name="fullName"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Full Name</FormLabel>
-                          <FormControl>
-                            <Input 
-                              placeholder="John Doe" 
-                              {...field} 
-                              autoComplete="name"
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={signUpForm.control}
                       name="email"
                       render={({ field }) => (
                         <FormItem>
@@ -279,24 +254,6 @@ const AuthPage = () => {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Password</FormLabel>
-                          <FormControl>
-                            <Input 
-                              placeholder="••••••••" 
-                              type="password" 
-                              {...field} 
-                              autoComplete="new-password"
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={signUpForm.control}
-                      name="confirmPassword"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Confirm Password</FormLabel>
                           <FormControl>
                             <Input 
                               placeholder="••••••••" 
