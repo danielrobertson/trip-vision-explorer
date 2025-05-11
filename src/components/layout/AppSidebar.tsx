@@ -76,17 +76,12 @@ const AppSidebar = () => {
 
   const handleSignOut = async () => {
     await signOut();
-    window.location.href = "/auth";
+    window.location.href = "/";
   };
 
   const handleNavigation = (e: React.MouseEvent<HTMLAnchorElement>, url: string) => {
-    if (!user) {
-      e.preventDefault();
-      // Store the intended destination in localStorage
-      localStorage.setItem("redirectAfterAuth", url);
-      navigate("/auth");
-    }
-    // If user is authenticated, regular navigation occurs
+    // Navigation should work for all users regardless of auth state
+    // No prevention of navigation needed here
   };
 
   const getInitials = (name: string) => {
@@ -132,7 +127,6 @@ const AppSidebar = () => {
                       to={item.url} 
                       end 
                       className={getNavCls}
-                      onClick={(e) => handleNavigation(e, item.url)}
                     >
                       <item.icon className={`h-4 w-4 ${isActive(item.url) ? "text-primary" : "text-muted-foreground"}`} />
                       {!collapsed && <span>{item.title}</span>}
@@ -160,7 +154,6 @@ const AppSidebar = () => {
                       to={item.url} 
                       end 
                       className={getNavCls}
-                      onClick={(e) => handleNavigation(e, item.url)}
                     >
                       <item.icon className={`h-4 w-4 ${isActive(item.url) ? "text-primary" : "text-muted-foreground"}`} />
                       {!collapsed && <span>{item.title}</span>}

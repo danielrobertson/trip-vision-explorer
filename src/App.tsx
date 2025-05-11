@@ -15,7 +15,6 @@ import MapViewPage from "./pages/MapViewPage";
 import TripsPage from "./pages/TripsPage";
 import CreateTripPage from "./pages/CreateTripPage";
 import NotFound from "./pages/NotFound";
-import ProtectedRoute from "./components/auth/ProtectedRoute";
 
 const queryClient = new QueryClient();
 
@@ -31,31 +30,11 @@ const App = () => (
               <Route path="/auth" element={<AuthPage />} />
               <Route path="/" element={<Layout />}>
                 <Route index element={<HomePage />} />
-                <Route path="/analyze" element={
-                  <ProtectedRoute>
-                    <AnalyzerPage />
-                  </ProtectedRoute>
-                } />
-                <Route path="/itinerary" element={
-                  <ProtectedRoute>
-                    <ItineraryPage />
-                  </ProtectedRoute>
-                } />
-                <Route path="/trips" element={
-                  <ProtectedRoute>
-                    <TripsPage />
-                  </ProtectedRoute>
-                } />
-                <Route path="/trips/create" element={
-                  <ProtectedRoute>
-                    <CreateTripPage />
-                  </ProtectedRoute>
-                } />
-                <Route path="/map" element={
-                  <ProtectedRoute>
-                    <MapViewPage />
-                  </ProtectedRoute>
-                } />
+                <Route path="/analyze" element={<AnalyzerPage />} />
+                <Route path="/itinerary" element={<ItineraryPage />} />
+                <Route path="/trips" element={<TripsPage />} />
+                <Route path="/trips/create" element={<CreateTripPage />} />
+                <Route path="/map" element={<MapViewPage />} />
                 <Route path="*" element={<NotFound />} />
               </Route>
             </Routes>
