@@ -1,12 +1,14 @@
 
-import { useLocation } from "react-router-dom";
-import { NavLink } from "react-router-dom";
+import { useLocation, NavLink } from "react-router-dom";
 import { 
   Video, 
   Home,
   Map,
   Plus,
   Compass,
+  LogIn,
+  LogOut,
+  User,
 } from "lucide-react";
 
 import {
@@ -25,6 +27,7 @@ import {
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/context/AuthContext";
 
 const primaryNavItems = [
   { 
@@ -35,7 +38,8 @@ const primaryNavItems = [
   { 
     title: "My Trips", 
     url: "/trips", 
-    icon: Map 
+    icon: Map,
+    requiresAuth: true
   },
 ];
 
@@ -43,12 +47,14 @@ const toolsNavItems = [
   { 
     title: "Create Trip", 
     url: "/trips/create", 
-    icon: Plus 
+    icon: Plus, 
+    requiresAuth: true
   },
   { 
     title: "Video Analyzer", 
     url: "/analyze", 
-    icon: Video 
+    icon: Video,
+    requiresAuth: true 
   },
 ];
 
@@ -57,6 +63,7 @@ const AppSidebar = () => {
   const currentPath = location.pathname;
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
+  const { user, signOut } = useAuth();
 
   const isActive = (path: string) => 
     path === "/" ? currentPath === path : currentPath.startsWith(path);
@@ -69,8 +76,19 @@ const AppSidebar = () => {
         : "text-muted-foreground hover:text-foreground"
     );
 
-  // Mock user state - in a real app, this would come from authentication
-  const isSignedIn = false;
+  const handleSignOut = async () => {
+    await signOut();
+    window.location.href = "/auth";
+  };
+
+  const getInitials = (name: string) => {
+    if (!name) return "U";
+    return name.split(" ")
+      .map(part => part[0])
+      .join("")
+      .toUpperCase()
+      .substring(0, 2);
+  };
 
   return (
     <Sidebar
@@ -99,16 +117,21 @@ const AppSidebar = () => {
 
           <SidebarGroupContent>
             <SidebarMenu>
-              {primaryNavItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild tooltip={collapsed ? item.title : undefined}>
-                    <NavLink to={item.url} end className={getNavCls}>
-                      <item.icon className={`h-4 w-4 ${isActive(item.url) ? "text-primary" : "text-muted-foreground"}`} />
-                      {!collapsed && <span>{item.title}</span>}
-                    </NavLink>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+              {primaryNavItems.map((item) => {
+                // Skip items requiring auth if user is not authenticated
+                if (item.requiresAuth && !user) return null;
+                
+                return (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton asChild tooltip={collapsed ? item.title : undefined}>
+                      <NavLink to={item.url} end className={getNavCls}>
+                        <item.icon className={`h-4 w-4 ${isActive(item.url) ? "text-primary" : "text-muted-foreground"}`} />
+                        {!collapsed && <span>{item.title}</span>}
+                      </NavLink>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
@@ -122,39 +145,64 @@ const AppSidebar = () => {
 
           <SidebarGroupContent>
             <SidebarMenu>
-              {toolsNavItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild tooltip={collapsed ? item.title : undefined}>
-                    <NavLink to={item.url} end className={getNavCls}>
-                      <item.icon className={`h-4 w-4 ${isActive(item.url) ? "text-primary" : "text-muted-foreground"}`} />
-                      {!collapsed && <span>{item.title}</span>}
-                    </NavLink>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+              {toolsNavItems.map((item) => {
+                // Skip items requiring auth if user is not authenticated
+                if (item.requiresAuth && !user) return null;
+                
+                return (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton asChild tooltip={collapsed ? item.title : undefined}>
+                      <NavLink to={item.url} end className={getNavCls}>
+                        <item.icon className={`h-4 w-4 ${isActive(item.url) ? "text-primary" : "text-muted-foreground"}`} />
+                        {!collapsed && <span>{item.title}</span>}
+                      </NavLink>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
 
       <SidebarFooter className="mt-auto border-t p-4">
-        {isSignedIn ? (
+        {user ? (
           <div className="flex items-center gap-3">
             <Avatar>
               <AvatarFallback className="bg-primary/10 text-primary">
-                JD
+                {getInitials(user.user_metadata.full_name || user.email || "")}
               </AvatarFallback>
             </Avatar>
             {!collapsed && (
-              <div className="flex flex-col">
-                <span className="text-sm font-medium">John Doe</span>
-                <span className="text-xs text-muted-foreground">john@example.com</span>
+              <div className="flex flex-col flex-1 overflow-hidden">
+                <span className="text-sm font-medium truncate">
+                  {user.user_metadata.full_name || user.email?.split('@')[0]}
+                </span>
+                <span className="text-xs text-muted-foreground truncate">{user.email}</span>
               </div>
             )}
+            <Button 
+              size="icon" 
+              variant="ghost" 
+              onClick={handleSignOut}
+              title="Sign out"
+              className="ml-auto"
+            >
+              <LogOut className="h-4 w-4" />
+            </Button>
           </div>
         ) : (
-          <Button className={collapsed ? "p-2 w-full" : "w-full"} variant="default">
-            {collapsed ? "In" : "Sign In"}
+          <Button 
+            className={collapsed ? "p-2 w-full" : "w-full"} 
+            variant="default"
+            onClick={() => window.location.href = "/auth"}
+          >
+            {collapsed ? <LogIn className="h-4 w-4" /> : (
+              <>
+                <LogIn className="h-4 w-4 mr-2" />
+                Sign In
+              </>
+            )}
           </Button>
         )}
       </SidebarFooter>
