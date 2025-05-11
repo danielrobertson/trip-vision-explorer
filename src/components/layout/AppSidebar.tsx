@@ -59,27 +59,27 @@ const AppSidebar = () => {
   
   const getNavCls = ({ isActive }: { isActive: boolean }) =>
     isActive 
-      ? "flex items-center gap-3 p-2 rounded-md bg-sidebar-accent text-primary font-medium" 
-      : "flex items-center gap-3 p-2 rounded-md text-sidebar-foreground hover:bg-sidebar-accent/50 transition-colors";
+      ? "flex items-center gap-3 p-2 rounded-md text-primary font-medium" 
+      : "flex items-center gap-3 p-2 rounded-md text-muted-foreground hover:text-foreground transition-colors";
 
   // Mock user state - in a real app, this would come from authentication
   const isSignedIn = false;
 
   return (
     <Sidebar
-      className="border-r transition-all duration-300 w-64 md:w-[240px] bg-white"
+      className="border-r transition-all duration-300 w-64 md:w-[240px] bg-background"
       collapsible="none"
     >
-      <div className="flex h-16 items-center justify-start border-b px-6">
-        <Compass className="h-5 w-5 text-ocean mr-2" />
-        <h2 className="font-bold text-ocean-dark text-lg">
+      <div className="flex h-14 items-center justify-start px-4 border-b">
+        <Compass className="h-5 w-5 text-primary mr-2" />
+        <h2 className="font-semibold text-foreground text-lg">
           TripTrace
         </h2>
       </div>
 
-      <SidebarContent className="p-4">
+      <SidebarContent className="p-2">
         <SidebarGroup>
-          <SidebarGroupLabel className="text-xs text-muted-foreground px-2 mb-1">
+          <SidebarGroupLabel className="text-xs text-muted-foreground px-2 mb-1 mt-2">
             Navigation
           </SidebarGroupLabel>
 
@@ -89,7 +89,7 @@ const AppSidebar = () => {
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
                     <NavLink to={item.url} end className={getNavCls}>
-                      <item.icon className={`h-4 w-4 ${isActive(item.url) ? "text-ocean" : "text-muted-foreground"}`} />
+                      <item.icon className={`h-4 w-4 ${isActive(item.url) ? "text-primary" : "text-muted-foreground"}`} />
                       <span>{item.title}</span>
                     </NavLink>
                   </SidebarMenuButton>
@@ -99,10 +99,8 @@ const AppSidebar = () => {
           </SidebarGroupContent>
         </SidebarGroup>
         
-        <div className="my-2 border-t border-border/40"></div>
-        
         <SidebarGroup>
-          <SidebarGroupLabel className="text-xs text-muted-foreground px-2 mb-1">
+          <SidebarGroupLabel className="text-xs text-muted-foreground px-2 mb-1 mt-4">
             Tools
           </SidebarGroupLabel>
 
@@ -112,7 +110,7 @@ const AppSidebar = () => {
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
                     <NavLink to={item.url} end className={getNavCls}>
-                      <item.icon className={`h-4 w-4 ${isActive(item.url) ? "text-ocean" : "text-muted-foreground"}`} />
+                      <item.icon className={`h-4 w-4 ${isActive(item.url) ? "text-primary" : "text-muted-foreground"}`} />
                       <span>{item.title}</span>
                     </NavLink>
                   </SidebarMenuButton>
@@ -137,7 +135,7 @@ const AppSidebar = () => {
             </div>
           </div>
         ) : (
-          <Button className="w-full bg-ocean hover:bg-ocean-dark" variant="default">
+          <Button className="w-full" variant="default">
             Sign In
           </Button>
         )}
