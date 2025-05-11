@@ -1,6 +1,8 @@
 
 import * as React from "react"
 
+// DEPRECATED: Use Tailwind's responsive classes instead (e.g., md:px-6 instead of conditional classes)
+// This hook is kept for backward compatibility with existing code
 const MOBILE_BREAKPOINT = 768
 
 export function useIsMobile() {

@@ -12,7 +12,6 @@ import { Button } from "@/components/ui/button";
 import { Compass } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { Separator } from "@/components/ui/separator";
-import { useIsMobile } from "@/hooks/use-mobile";
 
 // Login form schema
 const loginSchema = z.object({
@@ -39,7 +38,6 @@ const AuthPage = () => {
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [activeTab, setActiveTab] = useState("login");
-  const isMobile = useIsMobile();
 
   // If user is already authenticated, redirect to home page
   if (user && !isLoading) {
@@ -122,11 +120,11 @@ const AuthPage = () => {
           
           <TabsContent value="login">
             <Card className="border shadow-sm">
-              <CardHeader className={isMobile ? "px-4 py-5" : "px-6 py-6"}>
+              <CardHeader className="px-4 py-5 md:px-6 md:py-6">
                 <CardTitle>Login</CardTitle>
                 <CardDescription>Enter your credentials to access your account</CardDescription>
               </CardHeader>
-              <CardContent className={`space-y-4 ${isMobile ? "px-4" : "px-6"}`}>
+              <CardContent className="space-y-4 px-4 md:px-6">
                 <Button 
                   variant="outline" 
                   className="w-full flex items-center justify-center gap-2"
@@ -197,7 +195,7 @@ const AuthPage = () => {
                   </form>
                 </Form>
               </CardContent>
-              <CardFooter className={`flex justify-center ${isMobile ? "px-4 py-4" : "px-6 py-6"}`}>
+              <CardFooter className="flex justify-center px-4 py-4 md:px-6 md:py-6">
                 <Button 
                   variant="link" 
                   onClick={() => setActiveTab("signup")}
@@ -211,11 +209,11 @@ const AuthPage = () => {
           
           <TabsContent value="signup">
             <Card className="border shadow-sm">
-              <CardHeader className={isMobile ? "px-4 py-5" : "px-6 py-6"}>
+              <CardHeader className="px-4 py-5 md:px-6 md:py-6">
                 <CardTitle>Create an Account</CardTitle>
                 <CardDescription>Enter your details to create a new account</CardDescription>
               </CardHeader>
-              <CardContent className={`space-y-4 ${isMobile ? "px-4" : "px-6"}`}>
+              <CardContent className="space-y-4 px-4 md:px-6">
                 <Button 
                   variant="outline" 
                   className="w-full flex items-center justify-center gap-2"
@@ -321,7 +319,7 @@ const AuthPage = () => {
                   </form>
                 </Form>
               </CardContent>
-              <CardFooter className={`flex justify-center ${isMobile ? "px-4 py-4" : "px-6 py-6"}`}>
+              <CardFooter className="flex justify-center px-4 py-4 md:px-6 md:py-6">
                 <Button 
                   variant="link" 
                   onClick={() => setActiveTab("login")}
